@@ -120,6 +120,13 @@ public class WealthTrackerPluginTest
 	}
 
 	@Test
+	public void filterByDays_null_returnsEmpty()
+	{
+		List<WealthSnapshot> result = WealthUtils.filterByDays(null, 7);
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
 	public void snapshot_totalNetWorth_doesNotIncludeCoinsInHandTwice()
 	{
 		WealthSnapshot s = WealthSnapshot.create(100_000L, 50_000L, 75_000L, 5_000L, null);

@@ -94,6 +94,10 @@ public final class WealthUtils
 
 	public static List<WealthSnapshot> filterByDays(List<WealthSnapshot> snapshots, int days)
 	{
+		if (snapshots == null || snapshots.isEmpty())
+		{
+			return Collections.emptyList();
+		}
 		if (days == Integer.MAX_VALUE) return snapshots;
 		long cutoff = System.currentTimeMillis() - ((long) days * 86_400_000L);
 		List<WealthSnapshot> result = new ArrayList<>();

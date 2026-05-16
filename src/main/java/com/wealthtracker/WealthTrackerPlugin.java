@@ -77,7 +77,15 @@ public class WealthTrackerPlugin extends Plugin
 
 		log.debug("WealthTracker: navigation button and overlay registered");
 
-		if (client.getGameState() == GameState.LOGGED_IN)
+		SwingUtilities.invokeLater(() ->
+		{
+			if (panel != null)
+			{
+				panel.refresh();
+			}
+		});
+
+		if (client.getGameState() == GameState.LOGGED_IN && config.snapshotOnLogin())
 		{
 			log.debug("WealthTracker: already logged in at startUp, scheduling snapshot");
 			scheduleLoginSnapshot();
@@ -226,7 +234,7 @@ public class WealthTrackerPlugin extends Plugin
 		WealthSnapshot snapshot = WealthSnapshot.create(
 			bankValue, inventoryValue, equipmentValue, coinsInHand, breakdown);
 
-		log.info("WealthTracker: snapshot — total={} (bank={}, inv={}, equip={}) trigger={}",
+		log.debug("WealthTracker: snapshot — total={} (bank={}, inv={}, equip={}) trigger={}",
 			WealthUtils.formatGp(snapshot.getTotalNetWorth()),
 			WealthUtils.formatGp(bankValue),
 			WealthUtils.formatGp(inventoryValue),

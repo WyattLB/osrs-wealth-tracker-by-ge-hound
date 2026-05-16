@@ -3,10 +3,8 @@ package com.wealthtracker;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.net.URI;
 import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -26,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.PluginPanel;
+import net.runelite.client.util.LinkBrowser;
 
 @Slf4j
 public class WealthTrackerPanel extends PluginPanel
@@ -163,14 +162,7 @@ public class WealthTrackerPanel extends PluginPanel
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
-				try
-				{
-					Desktop.getDesktop().browse(new URI("https://gehound.com"));
-				}
-				catch (Exception ex)
-				{
-					log.warn("WealthTracker: could not open browser", ex);
-				}
+				LinkBrowser.browse("https://gehound.com");
 			}
 		});
 
