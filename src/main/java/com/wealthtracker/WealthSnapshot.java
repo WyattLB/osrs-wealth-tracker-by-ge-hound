@@ -15,6 +15,9 @@ public class WealthSnapshot
 	private long inventoryValue;
 	private long equipmentValue;
 	private long coinsInHand;
+	private long lootingBagValue;
+	private long seedVaultValue;
+	private long groupStorageValue;
 	private long totalNetWorth;
 	private Map<Integer, ItemSnapshot> itemBreakdown;
 
@@ -23,6 +26,9 @@ public class WealthSnapshot
 		long inventoryValue,
 		long equipmentValue,
 		long coinsInHand,
+		long lootingBagValue,
+		long seedVaultValue,
+		long groupStorageValue,
 		Map<Integer, ItemSnapshot> breakdown)
 	{
 		WealthSnapshot s = new WealthSnapshot();
@@ -31,7 +37,11 @@ public class WealthSnapshot
 		s.inventoryValue = inventoryValue;
 		s.equipmentValue = equipmentValue;
 		s.coinsInHand = coinsInHand;
-		s.totalNetWorth = bankValue + inventoryValue + equipmentValue;
+		s.lootingBagValue = lootingBagValue;
+		s.seedVaultValue = seedVaultValue;
+		s.groupStorageValue = groupStorageValue;
+		s.totalNetWorth = bankValue + inventoryValue + equipmentValue
+			+ lootingBagValue + seedVaultValue + groupStorageValue;
 		s.itemBreakdown = breakdown;
 		return s;
 	}

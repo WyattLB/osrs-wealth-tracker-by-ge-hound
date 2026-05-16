@@ -130,7 +130,7 @@ public class WealthTrackerPluginTest
 	@Test
 	public void filterByDays_allTime_returnsAll()
 	{
-		WealthSnapshot s = WealthSnapshot.create(100, 0, 0, 0, null);
+		WealthSnapshot s = WealthSnapshot.create(100, 0, 0, 0, 0, 0, 0, null);
 		List<WealthSnapshot> list = java.util.Arrays.asList(s);
 		List<WealthSnapshot> result = WealthUtils.filterByDays(list, Integer.MAX_VALUE);
 		assertEquals(1, result.size());
@@ -144,17 +144,25 @@ public class WealthTrackerPluginTest
 	}
 
 	@Test
-	public void snapshot_totalNetWorth_doesNotIncludeCoinsInHandTwice()
+	public void snapshot_totalNetWorth_includesAllContainers()
 	{
-		WealthSnapshot s = WealthSnapshot.create(100_000L, 50_000L, 75_000L, 5_000L, null);
-		assertEquals(225_000L, s.getTotalNetWorth());
+		WealthSnapshot s = WealthSnapshot.create(
+			100_000L,
+			50_000L,
+			75_000L,
+			5_000L,
+			10_000L,
+			8_000L,
+			12_000L,
+			null);
+		assertEquals(255_000L, s.getTotalNetWorth());
 	}
 
 	@Test
 	public void snapshot_timestampIsRecent()
 	{
 		long before = System.currentTimeMillis();
-		WealthSnapshot s = WealthSnapshot.create(0, 0, 0, 0, null);
+		WealthSnapshot s = WealthSnapshot.create(0, 0, 0, 0, 0, 0, 0, null);
 		long after = System.currentTimeMillis();
 		assertTrue(s.getTimestamp() >= before);
 		assertTrue(s.getTimestamp() <= after);

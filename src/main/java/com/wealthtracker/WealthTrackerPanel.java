@@ -42,6 +42,9 @@ public class WealthTrackerPanel extends PluginPanel
 	private final JLabel bankLabel = new JLabel("—");
 	private final JLabel invLabel = new JLabel("—");
 	private final JLabel equipLabel = new JLabel("—");
+	private final JLabel lootBagLabel = new JLabel("—");
+	private final JLabel seedVaultLabel = new JLabel("—");
+	private final JLabel groupStorageLabel = new JLabel("—");
 	private final JLabel[] moverLabels = {new JLabel("—"), new JLabel("—"), new JLabel("—")};
 
 	private int selectedRangeIndex = 1;
@@ -133,6 +136,9 @@ public class WealthTrackerPanel extends PluginPanel
 		add(buildRow("Bank", bankLabel));
 		add(buildRow("Inventory", invLabel));
 		add(buildRow("Equipped", equipLabel));
+		add(buildRow("Looting Bag", lootBagLabel));
+		add(buildRow("Seed Vault", seedVaultLabel));
+		add(buildRow("GIM Storage", groupStorageLabel));
 	}
 
 	private void buildMoversSection()
@@ -225,6 +231,9 @@ public class WealthTrackerPanel extends PluginPanel
 			bankLabel.setText("—");
 			invLabel.setText("—");
 			equipLabel.setText("—");
+			lootBagLabel.setText("—");
+			seedVaultLabel.setText("—");
+			groupStorageLabel.setText("—");
 			for (JLabel ml : moverLabels)
 			{
 				ml.setText("—");
@@ -265,6 +274,19 @@ public class WealthTrackerPanel extends PluginPanel
 		bankLabel.setText(WealthUtils.formatGp(latest.getBankValue()));
 		invLabel.setText(WealthUtils.formatGp(latest.getInventoryValue()));
 		equipLabel.setText(WealthUtils.formatGp(latest.getEquipmentValue()));
+
+		lootBagLabel.setText(
+			config.includeLootingBag()
+				? WealthUtils.formatGp(latest.getLootingBagValue())
+				: "—");
+		seedVaultLabel.setText(
+			config.includeSeedVault()
+				? WealthUtils.formatGp(latest.getSeedVaultValue())
+				: "—");
+		groupStorageLabel.setText(
+			config.includeGroupStorage()
+				? WealthUtils.formatGp(latest.getGroupStorageValue())
+				: "—");
 
 		if (prev != null
 			&& prev.getItemBreakdown() != null
@@ -316,16 +338,19 @@ public class WealthTrackerPanel extends PluginPanel
 
 		try (java.io.PrintWriter pw = new java.io.PrintWriter(chooser.getSelectedFile()))
 		{
-			pw.println("timestamp_ms,date,total_net_worth_gp,bank_gp,inventory_gp,equipment_gp");
+			pw.println("timestamp_ms,date,total_net_worth_gp,bank_gp,inventory_gp,equipment_gp,looting_bag_gp,seed_vault_gp,group_storage_gp");
 			for (WealthSnapshot s : all)
 			{
-				pw.printf("%d,\"%s\",%d,%d,%d,%d%n",
+				pw.printf("%d,\"%s\",%d,%d,%d,%d,%d,%d,%d%n",
 					s.getTimestamp(),
 					new java.util.Date(s.getTimestamp()),
 					s.getTotalNetWorth(),
 					s.getBankValue(),
 					s.getInventoryValue(),
-					s.getEquipmentValue());
+					s.getEquipmentValue(),
+					s.getLootingBagValue(),
+					s.getSeedVaultValue(),
+					s.getGroupStorageValue());
 			}
 			log.debug("WealthTracker: exported {} rows to CSV", all.size());
 			JOptionPane.showMessageDialog(this,

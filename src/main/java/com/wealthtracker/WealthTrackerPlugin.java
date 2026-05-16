@@ -166,6 +166,9 @@ public class WealthTrackerPlugin extends Plugin
 		long inventoryValue = 0;
 		long equipmentValue = 0;
 		long coinsInHand = 0;
+		long lootingBagValue = 0;
+		long seedVaultValue = 0;
+		long groupStorageValue = 0;
 		Map<Integer, ItemSnapshot> breakdown = new HashMap<>();
 
 		if (config.includeBank())
@@ -231,14 +234,86 @@ public class WealthTrackerPlugin extends Plugin
 			log.debug("WealthTracker: equipmentValue={}", WealthUtils.formatGp(equipmentValue));
 		}
 
-		WealthSnapshot snapshot = WealthSnapshot.create(
-			bankValue, inventoryValue, equipmentValue, coinsInHand, breakdown);
+		if (config.includeLootingBag())
+		{
+			ItemContainer lootingBag = client.getItemContainer(
+				net.runelite.api.gameval.InventoryID.LOOTING_BAG);
+			if (lootingBag != null)
+			{
+				for (Item item : lootingBag.getItems())
+				{
+					if (item == null || item.getId() <= 0) continue;
+					long price = resolvePrice(item.getId());
+					if (price < config.minItemValue()) continue;
+					long total = price * item.getQuantity();
+					lootingBagValue += total;
+					accumulateBreakdown(breakdown, item, price, total);
+				}
+			}
+			else
+			{
+				log.debug("WealthTracker: looting bag container null — bag not open or not in inventory");
+			}
+			log.debug("WealthTracker: lootingBagValue={}", WealthUtils.formatGp(lootingBagValue));
+		}
 
-		log.debug("WealthTracker: snapshot — total={} (bank={}, inv={}, equip={}) trigger={}",
+		if (config.includeSeedVault())
+		{
+			ItemContainer seedVault = client.getItemContainer(InventoryID.SEED_VAULT);
+			if (seedVault != null)
+			{
+				for (Item item : seedVault.getItems())
+				{
+					if (item == null || item.getId() <= 0) continue;
+					long price = resolvePrice(item.getId());
+					if (price < config.minItemValue()) continue;
+					long total = price * item.getQuantity();
+					seedVaultValue += total;
+					accumulateBreakdown(breakdown, item, price, total);
+				}
+			}
+			else
+			{
+				log.debug("WealthTracker: seed vault container null — vault not open this session");
+			}
+			log.debug("WealthTracker: seedVaultValue={}", WealthUtils.formatGp(seedVaultValue));
+		}
+
+		if (config.includeGroupStorage())
+		{
+			ItemContainer groupStorage = client.getItemContainer(InventoryID.GROUP_STORAGE);
+			if (groupStorage != null)
+			{
+				for (Item item : groupStorage.getItems())
+				{
+					if (item == null || item.getId() <= 0) continue;
+					long price = resolvePrice(item.getId());
+					if (price < config.minItemValue()) continue;
+					long total = price * item.getQuantity();
+					groupStorageValue += total;
+					accumulateBreakdown(breakdown, item, price, total);
+				}
+			}
+			else
+			{
+				log.debug("WealthTracker: group storage container null — not a GIM account or storage not opened");
+			}
+			log.debug("WealthTracker: groupStorageValue={}", WealthUtils.formatGp(groupStorageValue));
+		}
+
+		WealthSnapshot snapshot = WealthSnapshot.create(
+			bankValue, inventoryValue, equipmentValue, coinsInHand,
+			lootingBagValue, seedVaultValue, groupStorageValue,
+			breakdown);
+
+		log.info("WealthTracker: snapshot — total={} (bank={}, inv={}, equip={}, bag={}, seeds={}, gim={}) trigger={}",
 			WealthUtils.formatGp(snapshot.getTotalNetWorth()),
 			WealthUtils.formatGp(bankValue),
 			WealthUtils.formatGp(inventoryValue),
 			WealthUtils.formatGp(equipmentValue),
+			WealthUtils.formatGp(lootingBagValue),
+			WealthUtils.formatGp(seedVaultValue),
+			WealthUtils.formatGp(groupStorageValue),
 			trigger);
 
 		executor.submit(() ->

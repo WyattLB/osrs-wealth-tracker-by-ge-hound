@@ -108,4 +108,37 @@ public interface WealthTrackerConfig extends Config
 	{
 		return false;
 	}
+
+	@ConfigItem(
+		keyName = "includeLootingBag",
+		name = "Include Looting Bag",
+		description = "Count looting bag contents in net worth (requires bag to be open)",
+		position = 9
+	)
+	default boolean includeLootingBag()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "includeSeedVault",
+		name = "Include Seed Vault",
+		description = "Count seed vault contents in net worth (requires vault to be open)",
+		position = 10
+	)
+	default boolean includeSeedVault()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "includeGroupStorage",
+		name = "Include GIM Storage",
+		description = "Count Group Ironman shared storage in net worth (GIM accounts only)",
+		position = 11
+	)
+	default boolean includeGroupStorage()
+	{
+		return false;
+	}
 }
