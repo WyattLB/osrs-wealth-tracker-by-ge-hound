@@ -16,6 +16,12 @@ import net.runelite.client.config.ConfigManager;
 @Slf4j
 public class WealthDataManager
 {
+	// Snapshot data is stored by RuneLite's ConfigManager in the active RSProfile.
+	// To find it manually for testing/debugging:
+	//   macOS:   ~/.runelite/profiles/<profile-name>/<profile-name>.properties
+	//   Windows: %USERPROFILE%\.runelite\profiles\<profile-name>\<profile-name>.properties
+	// To test corrupt-data handling: open the file, find the "wealthtracker.snapshots" key,
+	// replace its value with "INVALID_JSON", save, then reload the plugin.
 	private static final String CONFIG_GROUP = "wealthtracker";
 	private static final String SNAPSHOTS_KEY = "snapshots";
 	private static final Gson GSON = new GsonBuilder().create();

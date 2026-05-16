@@ -1,3 +1,4 @@
+// macOS: if './gradlew' gives "Permission denied", run: chmod +x gradlew
 plugins {
 	id 'java'
 }

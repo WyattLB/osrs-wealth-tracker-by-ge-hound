@@ -12,21 +12,60 @@ A passive, read-only RuneLite plugin that tracks your total OSRS net worth (bank
 - CSV export
 - GE or High Alch pricing
 
-## Development
+## Setup
 
-Requires Java 11+.
+### Prerequisites
+
+- Java 11 (Eclipse Temurin 11 recommended)
+- IntelliJ IDEA Community Edition
+- Git
+
+### macOS
 
 ```bash
+# 1. Clone the repo
+git clone https://github.com/WyattLB/osrs-wealth-tracker-by-ge-hound.git
+cd osrs-wealth-tracker-by-ge-hound
+
+# 2. Make Gradle executable (required on macOS)
+chmod +x gradlew
+
+# 3. Run tests
 ./gradlew test
-./gradlew run          # dev client with plugin loaded
-./gradlew shadowJar    # fat JAR for manual launch
+
+# 4. Launch dev client
+./gradlew shadowJar
+java -ea -jar build/libs/osrs-wealth-tracker-by-ge-hound-1.0-SNAPSHOT-all.jar --developer-mode --debug
 ```
 
-Dev client VM args: `-ea`  
-Program args: `--developer-mode --debug`
+IntelliJ: Open the project, set SDK to Eclipse Temurin 11
+(`/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home`),
+then run `WealthTrackerPluginTest.main()` with VM arg `-ea` and
+program args `--developer-mode --debug`.
+
+### Windows
+
+```bat
+gradlew.bat test
+gradlew.bat shadowJar
+java -ea -jar build\libs\osrs-wealth-tracker-by-ge-hound-1.0-SNAPSHOT-all.jar --developer-mode --debug
+```
+
+## Data Storage
+
+Snapshots are stored locally in your RuneLite profile config:
+
+- **macOS:** `~/.runelite/profiles/`
+- **Windows:** `%USERPROFILE%\.runelite\profiles\`
+
+No data leaves your machine. This plugin makes zero network requests.
 
 ## Install
 
 Build from source or install via RuneLite Plugin Hub once published.
 
 Support: https://github.com/WyattLB/osrs-wealth-tracker-by-ge-hound
+
+## License
+
+BSD 2-Clause. See [LICENSE](LICENSE).

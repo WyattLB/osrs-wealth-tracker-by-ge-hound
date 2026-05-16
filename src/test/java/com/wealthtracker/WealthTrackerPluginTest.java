@@ -9,6 +9,23 @@ import static org.junit.Assert.assertTrue;
 
 public class WealthTrackerPluginTest
 {
+	/**
+	 * Dev client entry point. Launches a full RuneLite client with Wealth Tracker loaded.
+	 *
+	 * IntelliJ run configuration (Run → Edit Configurations → Modify Options):
+	 *   VM options:      -ea
+	 *   Program args:    --developer-mode --debug
+	 *
+	 * macOS only — if you see "could not find or load main class":
+	 *   File → Project Structure → SDK → must be Eclipse Temurin 11
+	 *   JDK location:  /Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home
+	 *
+	 * macOS only — if you see module access errors at startup (only happens if JDK 17+ was installed):
+	 *   Add to VM options: --add-opens=java.desktop/com.apple.eawt=ALL-UNNAMED
+	 *
+	 * Run './gradlew shadowJar' to produce the standalone JAR, then:
+	 *   java -ea -jar build/libs/osrs-wealth-tracker-by-ge-hound-1.0-SNAPSHOT-all.jar --developer-mode --debug
+	 */
 	public static void main(String[] args) throws Exception
 	{
 		ExternalPluginManager.loadBuiltin(WealthTrackerPlugin.class);

@@ -309,8 +309,9 @@ public class WealthTrackerPanel extends PluginPanel
 			return;
 		}
 
-		JFileChooser chooser = new JFileChooser();
-		chooser.setSelectedFile(new java.io.File("wealth-history.csv"));
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
+		chooser.setSelectedFile(new java.io.File(
+			System.getProperty("user.home"), "wealth-history.csv"));
 		if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
 
 		try (java.io.PrintWriter pw = new java.io.PrintWriter(chooser.getSelectedFile()))
