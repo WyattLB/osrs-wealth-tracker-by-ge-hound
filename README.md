@@ -1,71 +1,92 @@
 # Wealth Tracker
 
-A passive, read-only RuneLite plugin that tracks your total OSRS net worth (bank + inventory + equipment) over time. No network requests — all data stays local per account.
+A RuneLite plugin that records your OSRS net worth over time and shows it in the sidebar. It reads your bank, inventory, and worn gear by default. You can optionally include your looting bag, seed vault, or Group Ironman shared storage. Nothing is sent over the network; snapshots stay on your machine, per RuneLite profile.
 
-## Features
+Built for use with [GE Hound](https://gehound.com).
 
-- Snapshots on bank open and login (configurable)
-- Sidebar panel with net worth, delta vs last snapshot, history chart (1D / 7D / 30D / All)
-- Breakdown by bank, inventory, and equipment
-- Top 3 item movers between snapshots
-- Optional in-game overlay
-- CSV export
-- GE or High Alch pricing
+## What it does
 
-## Setup
+- Takes a snapshot when you open your bank or log in (each can be turned off in settings)
+- Shows total net worth, change since the last snapshot, and a history chart (1D, 7D, 30D, or all time)
+- Lists bank, inventory, equipment, and optional containers in a breakdown
+- Shows the top three items that moved the most GP since the previous snapshot
+- Optional small overlay with your current total
+- Export history to CSV
+- Price items by GE or high alch; skip stacks below a minimum value you set
 
-### Prerequisites
+## Optional containers (off by default)
 
-- Java 11 (Eclipse Temurin 11 recommended)
-- IntelliJ IDEA Community Edition
+These only count toward net worth when enabled in the plugin config **and** RuneLite can see that container this session (you usually need to open it at least once):
+
+| Setting | What it tracks |
+|---------|----------------|
+| Include Looting Bag | Looting bag contents |
+| Include Seed Vault | Seed vault at the Farming Guild |
+| Include GIM Storage | Group Ironman shared storage |
+
+If a container is not open yet, that part of your wealth is treated as zero for that snapshot. That is normal, not a bug.
+
+## Requirements
+
+- Java 11 (Eclipse Temurin 11 works well)
 - Git
+- IntelliJ IDEA if you want to run from the IDE
 
-### macOS
+## Build and run (macOS)
 
 ```bash
-# 1. Clone the repo
 git clone https://github.com/WyattLB/osrs-wealth-tracker-by-ge-hound.git
 cd osrs-wealth-tracker-by-ge-hound
-
-# 2. Make Gradle executable (required on macOS)
 chmod +x gradlew
-
-# 3. Run tests
 ./gradlew test
+./gradlew run
+```
 
-# 4. Launch dev client
+`./gradlew run` starts a dev RuneLite client with the plugin loaded. Use VM option `-ea` and program args `--developer-mode --debug` if you run from IntelliJ instead (`WealthTrackerPluginTest` main class).
+
+Shadow JAR (optional):
+
+```bash
 ./gradlew shadowJar
 java -ea -jar build/libs/osrs-wealth-tracker-by-ge-hound-1.0-SNAPSHOT-all.jar --developer-mode --debug
 ```
 
-IntelliJ: Open the project, set SDK to Eclipse Temurin 11
-(`/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home`),
-then run `WealthTrackerPluginTest.main()` with VM arg `-ea` and
-program args `--developer-mode --debug`.
+On macOS, point IntelliJ at Temurin 11, for example:
 
-### Windows
+`/Library/Java/JavaVirtualMachines/temurin-11.jdk/Contents/Home`
+
+## Build and run (Windows)
 
 ```bat
+git clone https://github.com/WyattLB/osrs-wealth-tracker-by-ge-hound.git
+cd osrs-wealth-tracker-by-ge-hound
 gradlew.bat test
-gradlew.bat shadowJar
+gradlew.bat run
+```
+
+Or after `gradlew.bat shadowJar`:
+
+```bat
 java -ea -jar build\libs\osrs-wealth-tracker-by-ge-hound-1.0-SNAPSHOT-all.jar --developer-mode --debug
 ```
 
-## Data Storage
+## Where data is stored
 
-Snapshots are stored locally in your RuneLite profile config:
+Snapshots are saved in RuneLite profile config (JSON in your profiles folder):
 
-- **macOS:** `~/.runelite/profiles/`
-- **Windows:** `%USERPROFILE%\.runelite\profiles\`
+- macOS: `~/.runelite/profiles/`
+- Windows: `%USERPROFILE%\.runelite\profiles\`
 
-No data leaves your machine. This plugin makes zero network requests.
+Look for the `wealthtracker.snapshots` key if you need to inspect or reset history manually. Old snapshots from before optional containers were added will show `0` for looting bag, seed vault, and GIM storage.
 
-## Install
+## Install for normal play
 
-Build from source or install via RuneLite Plugin Hub once published.
-
-Support: https://github.com/WyattLB/osrs-wealth-tracker-by-ge-hound
+Plugin Hub listing is not live yet. Until then, build from source with the steps above or install the built plugin through RuneLite's developer mode.
 
 ## License
 
 BSD 2-Clause. See [LICENSE](LICENSE).
+
+## Issues
+
+https://github.com/WyattLB/osrs-wealth-tracker-by-ge-hound/issues
