@@ -20,8 +20,9 @@ public class WealthChartPanel extends JPanel
 	private static final int PADDING_RIGHT = 8;
 	private static final int PADDING_TOP = 8;
 	private static final int PADDING_BOTTOM = 20;
-	private static final Color LINE_COLOR = new Color(0, 200, 83);
-	private static final Color FILL_COLOR = new Color(0, 200, 83, 40);
+	private static final Color LINE_COLOR = new Color(0, 220, 100);
+	private static final Color FILL_COLOR = new Color(0, 220, 100, 35);
+	private static final Color DOT_COLOR = new Color(0, 255, 120);
 	private static final Color GRID_COLOR = new Color(255, 255, 255, 25);
 
 	private List<WealthSnapshot> snapshots = new ArrayList<>();
@@ -53,13 +54,16 @@ public class WealthChartPanel extends JPanel
 
 		if (snapshots == null || snapshots.size() < 2)
 		{
-			g2.setColor(ColorScheme.LIGHT_GRAY_COLOR);
 			g2.setFont(FontManager.getRunescapeSmallFont());
+			FontMetrics fm = g2.getFontMetrics();
 			String msg1 = "Open your bank to";
 			String msg2 = "record a snapshot";
-			FontMetrics fm = g2.getFontMetrics();
-			g2.drawString(msg1, (w - fm.stringWidth(msg1)) / 2, h / 2 - fm.getHeight() / 2);
-			g2.drawString(msg2, (w - fm.stringWidth(msg2)) / 2, h / 2 + fm.getHeight() / 2);
+			int lineH = fm.getHeight() + 2;
+			int startY = h / 2 - lineH / 2;
+			g2.setColor(new Color(100, 100, 100));
+			g2.drawString(msg1, (w - fm.stringWidth(msg1)) / 2, startY);
+			g2.setColor(new Color(80, 80, 80));
+			g2.drawString(msg2, (w - fm.stringWidth(msg2)) / 2, startY + lineH);
 			return;
 		}
 
@@ -101,9 +105,10 @@ public class WealthChartPanel extends JPanel
 			g2.setColor(GRID_COLOR);
 			g2.drawLine(PADDING_LEFT, lineY, w - PADDING_RIGHT, lineY);
 
-			String label = WealthUtils.formatGp(labelVal);
-			g2.setColor(ColorScheme.LIGHT_GRAY_COLOR);
-			g2.drawString(label, PADDING_LEFT - fm.stringWidth(label) - 3, lineY + fm.getAscent() / 2);
+			String shortLabel = compactGp(labelVal);
+			g2.setColor(new Color(140, 140, 140));
+			int labelX = Math.max(0, PADDING_LEFT - fm.stringWidth(shortLabel) - 4);
+			g2.drawString(shortLabel, labelX, lineY + fm.getAscent() / 2);
 		}
 
 		GeneralPath fillPath = new GeneralPath();
@@ -116,15 +121,28 @@ public class WealthChartPanel extends JPanel
 		g2.fill(fillPath);
 
 		g2.setColor(LINE_COLOR);
-		g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		g2.setStroke(new BasicStroke(2.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 		for (int i = 0; i < n - 1; i++) g2.drawLine(px[i], py[i], px[i + 1], py[i + 1]);
 
 		int dotRadius = 4;
-		g2.setColor(LINE_COLOR);
+		g2.setColor(new Color(0, 255, 120, 60));
+		g2.fillOval(px[n - 1] - dotRadius - 2, py[n - 1] - dotRadius - 2,
+			(dotRadius + 2) * 2, (dotRadius + 2) * 2);
+		g2.setColor(DOT_COLOR);
 		g2.fillOval(px[n - 1] - dotRadius, py[n - 1] - dotRadius,
 			dotRadius * 2, dotRadius * 2);
 		g2.setColor(ColorScheme.DARKER_GRAY_COLOR);
+		g2.setStroke(new BasicStroke(1.5f));
 		g2.drawOval(px[n - 1] - dotRadius, py[n - 1] - dotRadius,
 			dotRadius * 2, dotRadius * 2);
+	}
+
+	private String compactGp(long value)
+	{
+		if (value < 0) return "-" + compactGp(-value);
+		if (value >= 1_000_000_000L) return String.format("%.1fb", value / 1_000_000_000.0);
+		if (value >= 1_000_000L) return String.format("%.1fm", value / 1_000_000.0);
+		if (value >= 1_000L) return String.format("%dk", value / 1_000);
+		return value + "";
 	}
 }

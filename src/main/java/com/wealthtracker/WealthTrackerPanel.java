@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.MouseAdapter;
@@ -81,16 +82,25 @@ public class WealthTrackerPanel extends PluginPanel
 
 	private void buildHeader()
 	{
+		JPanel headerPanel = new JPanel(new BorderLayout());
+		headerPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+		headerPanel.setBorder(new EmptyBorder(8, 10, 8, 10));
+		headerPanel.setAlignmentX(LEFT_ALIGNMENT);
+		headerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+
 		JLabel header = new JLabel("💰 WEALTH TRACKER");
 		header.setFont(FontManager.getRunescapeBoldFont().deriveFont(13f));
 		header.setForeground(Color.WHITE);
-		header.setAlignmentX(CENTER_ALIGNMENT);
-		add(header);
+		header.setHorizontalAlignment(SwingConstants.CENTER);
+
+		headerPanel.add(header, BorderLayout.CENTER);
+		add(headerPanel);
 	}
 
 	private void buildNetWorthSection()
 	{
-		netWorthLabel.setFont(FontManager.getRunescapeBoldFont().deriveFont(18f));
+		netWorthLabel.setFont(FontManager.getRunescapeBoldFont().deriveFont(20f));
+		netWorthLabel.setBorder(new EmptyBorder(4, 0, 2, 0));
 		netWorthLabel.setForeground(new Color(0, 200, 83));
 		netWorthLabel.setAlignmentX(CENTER_ALIGNMENT);
 		add(netWorthLabel);
@@ -149,15 +159,20 @@ public class WealthTrackerPanel extends PluginPanel
 		{
 			moverLabel.setFont(FontManager.getRunescapeSmallFont());
 			moverLabel.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+			moverLabel.setBorder(new EmptyBorder(2, 0, 2, 0));
 			add(moverLabel);
 		}
 	}
 
 	private void buildFooter()
 	{
-		JPanel footer = new JPanel(new BorderLayout());
-		footer.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		footer.setAlignmentX(LEFT_ALIGNMENT);
+		JPanel linkPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		linkPanel.setBackground(ColorScheme.DARK_GRAY_COLOR);
+		linkPanel.setAlignmentX(LEFT_ALIGNMENT);
+
+		JLabel linkPrefix = new JLabel("Powered by ");
+		linkPrefix.setFont(FontManager.getRunescapeSmallFont());
+		linkPrefix.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
 		JLabel link = new JLabel("gehound.com");
 		link.setFont(FontManager.getRunescapeSmallFont());
@@ -170,26 +185,44 @@ public class WealthTrackerPanel extends PluginPanel
 			{
 				LinkBrowser.browse("https://gehound.com");
 			}
+
+			@Override
+			public void mouseEntered(MouseEvent e)
+			{
+				link.setForeground(new Color(150, 210, 255));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e)
+			{
+				link.setForeground(new Color(100, 180, 255));
+			}
 		});
+
+		linkPanel.add(linkPrefix);
+		linkPanel.add(link);
 
 		JButton exportBtn = new JButton("Export CSV");
 		exportBtn.setFont(FontManager.getRunescapeSmallFont());
-		exportBtn.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+		exportBtn.setBackground(new Color(50, 50, 50));
 		exportBtn.setForeground(Color.WHITE);
-		exportBtn.setBorderPainted(false);
+		exportBtn.setBorderPainted(true);
 		exportBtn.setFocusPainted(false);
+		exportBtn.setAlignmentX(CENTER_ALIGNMENT);
+		exportBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
 		exportBtn.addActionListener(e -> exportCsv());
 
-		footer.add(link, BorderLayout.WEST);
-		footer.add(exportBtn, BorderLayout.EAST);
-		add(footer);
+		add(linkPanel);
+		add(Box.createVerticalStrut(4));
+		add(exportBtn);
 	}
 
 	private JLabel sectionTitle(String text)
 	{
 		JLabel label = new JLabel(text);
-		label.setFont(FontManager.getRunescapeSmallFont());
-		label.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+		label.setFont(FontManager.getRunescapeSmallFont().deriveFont(java.awt.Font.BOLD));
+		label.setForeground(new Color(160, 160, 160));
+		label.setBorder(new EmptyBorder(6, 0, 2, 0));
 		return label;
 	}
 
@@ -197,14 +230,27 @@ public class WealthTrackerPanel extends PluginPanel
 	{
 		JPanel row = new JPanel(new BorderLayout());
 		row.setBackground(ColorScheme.DARK_GRAY_COLOR);
+		row.setBorder(new EmptyBorder(1, 0, 1, 0));
+
 		JLabel key = new JLabel(labelText);
 		key.setFont(FontManager.getRunescapeSmallFont());
-		key.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+		key.setForeground(new Color(170, 170, 170));
+
 		valueLabel.setFont(FontManager.getRunescapeSmallFont());
 		valueLabel.setForeground(Color.WHITE);
+
 		row.add(key, BorderLayout.WEST);
 		row.add(valueLabel, BorderLayout.EAST);
 		return row;
+	}
+
+	private String truncateItemName(String name, int maxChars)
+	{
+		name = name.replaceAll("\\s*\\(Members\\)", "")
+			.replaceAll("\\s*\\(members\\)", "")
+			.trim();
+		if (name.length() <= maxChars) return name;
+		return name.substring(0, maxChars - 1) + "…";
 	}
 
 	private void addSeparator()
@@ -234,6 +280,12 @@ public class WealthTrackerPanel extends PluginPanel
 			lootBagLabel.setText("—");
 			seedVaultLabel.setText("—");
 			groupStorageLabel.setText("—");
+			bankLabel.setForeground(new Color(80, 80, 80));
+			invLabel.setForeground(new Color(80, 80, 80));
+			equipLabel.setForeground(new Color(80, 80, 80));
+			lootBagLabel.setForeground(new Color(80, 80, 80));
+			seedVaultLabel.setForeground(new Color(80, 80, 80));
+			groupStorageLabel.setForeground(new Color(80, 80, 80));
 			for (JLabel ml : moverLabels)
 			{
 				ml.setText("—");
@@ -251,15 +303,14 @@ public class WealthTrackerPanel extends PluginPanel
 		if (prev != null)
 		{
 			long delta = latest.getTotalNetWorth() - prev.getTotalNetWorth();
-			String deltaText = WealthUtils.formatDelta(delta)
+			String line1Color = delta > 0 ? "#00c853" : delta < 0 ? "#dc3232" : "#aaaaaa";
+			String line1 = "<font color='" + line1Color + "'>"
+				+ WealthUtils.formatDelta(delta)
 				+ " (" + WealthUtils.formatPercentage(prev.getTotalNetWorth(),
-					latest.getTotalNetWorth()) + ")"
-				+ " · " + WealthUtils.formatTimeSince(prev.getTimestamp());
-			deltaLabel.setText(deltaText);
-			deltaLabel.setForeground(
-				delta > 0 ? new Color(0, 200, 83) :
-				delta < 0 ? new Color(220, 50, 50) :
-				ColorScheme.LIGHT_GRAY_COLOR);
+					latest.getTotalNetWorth()) + ")</font>";
+			String line2 = WealthUtils.formatTimeSince(prev.getTimestamp());
+			deltaLabel.setText("<html><center>" + line1 + "<br><font color='#888888'>"
+				+ line2 + "</font></center></html>");
 		}
 		else
 		{
@@ -274,6 +325,9 @@ public class WealthTrackerPanel extends PluginPanel
 		bankLabel.setText(WealthUtils.formatGp(latest.getBankValue()));
 		invLabel.setText(WealthUtils.formatGp(latest.getInventoryValue()));
 		equipLabel.setText(WealthUtils.formatGp(latest.getEquipmentValue()));
+		bankLabel.setForeground(Color.WHITE);
+		invLabel.setForeground(Color.WHITE);
+		equipLabel.setForeground(Color.WHITE);
 
 		lootBagLabel.setText(
 			config.includeLootingBag()
@@ -287,6 +341,12 @@ public class WealthTrackerPanel extends PluginPanel
 			config.includeGroupStorage()
 				? WealthUtils.formatGp(latest.getGroupStorageValue())
 				: "—");
+		lootBagLabel.setForeground(
+			config.includeLootingBag() ? Color.WHITE : new Color(80, 80, 80));
+		seedVaultLabel.setForeground(
+			config.includeSeedVault() ? Color.WHITE : new Color(80, 80, 80));
+		groupStorageLabel.setForeground(
+			config.includeGroupStorage() ? Color.WHITE : new Color(80, 80, 80));
 
 		if (prev != null
 			&& prev.getItemBreakdown() != null
@@ -299,9 +359,12 @@ public class WealthTrackerPanel extends PluginPanel
 				if (i < movers.size())
 				{
 					WealthUtils.ItemDelta m = movers.get(i);
-					moverLabels[i].setText(m.getItemName() + "  " + WealthUtils.formatDelta(m.getDelta()));
-					moverLabels[i].setForeground(
-						m.getDelta() >= 0 ? new Color(0, 200, 83) : new Color(220, 50, 50));
+					String itemName = truncateItemName(m.getItemName(), 22);
+					String deltaStr = WealthUtils.formatDelta(m.getDelta());
+					moverLabels[i].setText("<html><b>" + itemName + "</b>&nbsp;&nbsp;"
+						+ "<font color='" + (m.getDelta() >= 0 ? "#00c853" : "#dc3232") + "'>"
+						+ deltaStr + "</font></html>");
+					moverLabels[i].setForeground(Color.WHITE);
 				}
 				else
 				{

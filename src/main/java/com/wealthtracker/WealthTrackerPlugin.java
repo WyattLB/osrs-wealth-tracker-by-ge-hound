@@ -390,9 +390,21 @@ public class WealthTrackerPlugin extends Plugin
 		}
 		catch (Exception e)
 		{
-			log.warn("WealthTracker: icon not found, using blank placeholder. " +
-				"Add a 16x16 PNG at src/main/resources/com/wealthtracker/icon.png");
-			return new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+			log.warn("WealthTracker: icon not found, generating placeholder");
+			BufferedImage placeholder = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+			java.awt.Graphics2D pg = placeholder.createGraphics();
+			pg.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,
+				java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+			pg.setColor(new java.awt.Color(255, 180, 0));
+			pg.fillOval(1, 1, 14, 14);
+			pg.setColor(new java.awt.Color(200, 140, 0));
+			pg.setStroke(new java.awt.BasicStroke(1f));
+			pg.drawOval(1, 1, 13, 13);
+			pg.setColor(new java.awt.Color(120, 80, 0));
+			pg.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 9));
+			pg.drawString("G", 4, 11);
+			pg.dispose();
+			return placeholder;
 		}
 	}
 

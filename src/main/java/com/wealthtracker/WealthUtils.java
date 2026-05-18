@@ -48,6 +48,7 @@ public final class WealthUtils
 	public static String formatTimeSince(long epochMs)
 	{
 		long secondsAgo = (System.currentTimeMillis() - epochMs) / 1000L;
+		if (secondsAgo <= 0) return "just now";
 		if (secondsAgo < 60) return "just now";
 		if (secondsAgo < 3600) return (secondsAgo / 60) + "m ago";
 		if (secondsAgo < 86400) return (secondsAgo / 3600) + "h ago";
