@@ -1,7 +1,6 @@
 package com.wealthtracker;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
@@ -24,9 +23,11 @@ public class WealthDataManager
 	// replace its value with "INVALID_JSON", save, then reload the plugin.
 	private static final String CONFIG_GROUP = "wealthtracker";
 	private static final String SNAPSHOTS_KEY = "snapshots";
-	private static final Gson GSON = new GsonBuilder().create();
 	private static final Type SNAPSHOT_LIST_TYPE =
 		new TypeToken<List<WealthSnapshot>>(){}.getType();
+
+	@Inject
+	private Gson gson;
 
 	private final ConfigManager configManager;
 	private List<WealthSnapshot> cachedSnapshots = null;
@@ -56,7 +57,7 @@ public class WealthDataManager
 
 		try
 		{
-			List<WealthSnapshot> loaded = GSON.fromJson(json, SNAPSHOT_LIST_TYPE);
+			List<WealthSnapshot> loaded = gson.fromJson(json, SNAPSHOT_LIST_TYPE);
 			cachedSnapshots = loaded != null ? loaded : new ArrayList<>();
 			log.debug("WealthTracker: loaded {} snapshots from profile", cachedSnapshots.size());
 			return new ArrayList<>(cachedSnapshots);
@@ -81,7 +82,7 @@ public class WealthDataManager
 		cachedSnapshots.add(snapshot);
 		pruneOldSnapshots(cachedSnapshots, retentionDays);
 
-		String json = GSON.toJson(cachedSnapshots);
+		String json = gson.toJson(cachedSnapshots);
 		configManager.setRSProfileConfiguration(CONFIG_GROUP, SNAPSHOTS_KEY, json);
 		log.debug("WealthTracker: saved {} snapshots to profile", cachedSnapshots.size());
 	}
