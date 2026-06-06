@@ -236,8 +236,8 @@ public class WealthTrackerPlugin extends Plugin
 
 		if (config.includeLootingBag())
 		{
-			ItemContainer lootingBag = client.getItemContainer(
-				net.runelite.api.gameval.InventoryID.LOOTING_BAG);
+			// Looting bag container (id 516) is not on net.runelite.api.InventoryID.
+			ItemContainer lootingBag = client.getItemContainer(516);
 			if (lootingBag != null)
 			{
 				for (Item item : lootingBag.getItems())
